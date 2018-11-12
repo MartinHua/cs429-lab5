@@ -39,5 +39,6 @@ cond:
     ret
 
 # Stack starts here and grows to lower addresses
-    .pos Ox500
+    .pos 0x400
 stack:
+
