@@ -20,7 +20,7 @@ ncopy:
 ##################################################################
 # You can modify this portion
 	# Loop header
-	xorq %rax,%rax		# count = 0;
+	xorq %rax, %rax		# count = 0;
 	iaddq $-3, %rdx     # len -= 3;
 	jg Loop0		    # if so, goto loop to decrease length to less than 4:
 Restore:
@@ -68,7 +68,7 @@ Loop3:
 Loop4:
 	iaddq $-4, %rdx
 	jg Loop0
-	jmp Residual0
+	jmp Restore
 ##################################################################
 # Do not modify the following section of code
 # Function epilogue.
