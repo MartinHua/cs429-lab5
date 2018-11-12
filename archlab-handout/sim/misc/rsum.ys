@@ -20,24 +20,22 @@ ele3:
 
 main:
     irmovq ele1, %rdi
-    call sum_list
+    call rsum_list
     ret
 
-# long sum_list(list_ptr ls)
+# long rsum_list(list_ptr ls)
 # ls in %rdi
-sum_list:
+rsum_list:
     pushq %r12
     pushq %r13
     irmovq $0, %rax
-    jmp cond
-loop:
-    mrmovq (%rdi), %r12
-    addq %r12, %rax
-    mrmovq 8(%rdi), %r13
-    rrmovq %r13, %rdi
-cond:
     andq %rdi, %rdi
-    jne loop
+    je done
+    mrmovq (%rdi), %r12
+    mrmovq 8(%rdi), %rdi
+    call rsum_list
+    addq %r12, %rax
+done:
     popq %r13
     popq %r12
     ret
