@@ -22,7 +22,7 @@ ncopy:
 	# Loop header
 	xorq %rax,%rax		# count = 0;
 	iaddq $-3, %rdx     # len -= 3;
-	jg Loop		        # if so, goto loop to decrease length to less than 4:
+	jg Loop0		    # if so, goto loop to decrease length to less than 4:
 Restore:
 	iaddq $3, %rdx
 Residual0:
@@ -32,7 +32,7 @@ Residual1:
 	mrmovq (%rdi), %r10
 	iaddq $8, %rdi
 	andq %r10, %r10
-	jle L0
+	jle Residual2
 	iaddq $1, %rax		# count++
 Residual2:
 	rmmovq %r10, (%rsi)
