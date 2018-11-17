@@ -17,8 +17,12 @@ StartFun:
 # Return the number of positive words (>0) contained in src.
 #
 # Include your name and ID here.
+# This is written by Xinrui Hua, xh3426
 #
 # Describe how and why you modified the baseline code.
+# Use iaddq
+# Decrease Data Hazard
+# Loop unrollling
 #
 ##################################################################
 # Do not modify this portion
@@ -29,23 +33,55 @@ ncopy:
 ##################################################################
 # You can modify this portion
 	# Loop header
-	xorq %rax,%rax		# count = 0;
-	andq %rdx,%rdx		# len <= 0?
-	jle Done		# if so, goto Done:
-
-Loop:	mrmovq (%rdi), %r10	# read val from src...
+	xorq %rax, %rax		# count = 0;
+	iaddq $-3, %rdx     # len -= 3;
+	jg Loop0		    # if so, goto loop to decrease length to less than 4:
+Restore:
+	iaddq $3, %rdx
+Residual0:
+	jg Residual1
+	ret
+Residual1:
+	mrmovq (%rdi), %r10
+	iaddq $8, %rdi
+	andq %r10, %r10
+	jle Residual2
+	iaddq $1, %rax		# count++
+Residual2:
+	rmmovq %r10, (%rsi)
+	iaddq $8, %rsi
+	iaddq $-1, %rdx
+	jmp Residual0
+Loop0:
+	mrmovq (%rdi), %r10	# read val from src...
+	iaddq $32, %rdi     # src += 4
 	rmmovq %r10, (%rsi)	# ...and store it to dst
 	andq %r10, %r10		# val <= 0?
-	jle Npos		# if so, goto Npos:
-	irmovq $1, %r10
-	addq %r10, %rax		# count++
-Npos:	irmovq $1, %r10
-	subq %r10, %rdx		# len--
-	irmovq $8, %r10
-	addq %r10, %rdi		# src++
-	addq %r10, %rsi		# dst++
-	andq %rdx,%rdx		# len > 0?
-	jg Loop			# if so, goto Loop:
+	jle Loop1		    # if so, goto Loop1:
+	iaddq $1, %rax		# count++
+Loop1:	
+	mrmovq -24(%rdi), %r10	# read val from src...
+	iaddq $32, %rsi     # dst += 4
+	rmmovq %r10, -24(%rsi)	# ...and store it to dst
+	andq %r10, %r10		# val <= 0?
+	mrmovq -16(%rdi), %r10	# read val from src...
+	jle Loop2		    # if so, goto Loop2:
+	iaddq $1, %rax		# count++
+Loop2:	
+	rmmovq %r10, -16(%rsi)	# ...and store it to dst
+	andq %r10, %r10		# val <= 0?
+	mrmovq -8(%rdi), %r10	# read val from src...
+	jle Loop3		    # if so, goto Loop3:
+	iaddq $1, %rax		# count++
+Loop3:	
+	rmmovq %r10, -8(%rsi)	# ...and store it to dst
+	andq %r10, %r10		# val <= 0?
+	jle Loop4		    # if so, goto Loop4:
+	iaddq $1, %rax		# count++
+Loop4:
+	iaddq $-4, %rdx
+	jg Loop0
+	jmp Restore
 ##################################################################
 # Do not modify the following section of code
 # Function epilogue.
@@ -62,8 +98,8 @@ EndFun:
 ###############################
 	.align 8
 src:
-	.quad 1
-	.quad -2
+	.quad -1
+	.quad 2
 	.quad -3
 	.quad 4
 	.quad 0xbcdefa # This shouldn't get moved
