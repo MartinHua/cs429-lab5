@@ -9,7 +9,7 @@
 # Describe how and why you modified the baseline code.
 # Use iaddq
 # Decrease Data Hazard
-# Loop unrollling
+# Loop unrollling, divide loops into several 4-loops and residual
 #
 ##################################################################
 # Do not modify this portion
@@ -30,38 +30,38 @@ Residual0:
 	ret
 Residual1:
 	mrmovq (%rdi), %r10 
-	iaddq $8, %rdi
+	iaddq $8, %rdi      # src++
 	andq %r10, %r10
 	jle Residual2
 	iaddq $1, %rax		# count++
 Residual2:
 	rmmovq %r10, (%rsi)
-	iaddq $8, %rsi
-	iaddq $-1, %rdx
+	iaddq $8, %rsi      # dst++
+	iaddq $-1, %rdx     # len--
 	jg Residual3
 	ret
 Residual3:
 	mrmovq (%rdi), %r10 
-	iaddq $8, %rdi
+	iaddq $8, %rdi      # src++
 	andq %r10, %r10
 	jle Residual4
 	iaddq $1, %rax		# count++
 Residual4:
 	rmmovq %r10, (%rsi)
-	iaddq $8, %rsi
-	iaddq $-1, %rdx
+	iaddq $8, %rsi      # dst++
+	iaddq $-1, %rdx     # len--
 	jg Residual5
 	ret
 Residual5:
 	mrmovq (%rdi), %r10 
-	iaddq $8, %rdi
+	iaddq $8, %rdi      # src++
 	andq %r10, %r10
 	jle Residual6
 	iaddq $1, %rax		# count++
 Residual6:
 	rmmovq %r10, (%rsi)
-	iaddq $8, %rsi
-	iaddq $-1, %rdx
+	iaddq $8, %rsi      # dst++
+	iaddq $-1, %rdx     # len--
 	ret
 Loop0:
 	mrmovq (%rdi), %r10	# read val from src...
