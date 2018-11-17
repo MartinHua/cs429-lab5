@@ -100,8 +100,8 @@
 0x180:                      | src:
 0x180: ffffffffffffffff     | 	.quad -1
 0x188: 0200000000000000     | 	.quad 2
-0x190: fdffffffffffffff     | 	.quad -3
-0x198: 0400000000000000     | 	.quad 4
+0x190: 0300000000000000     | 	.quad 3
+0x198: fcffffffffffffff     | 	.quad -4
 0x1a0: fadebc0000000000     | 	.quad 0xbcdefa # This shouldn't get moved
                             | 
 0x1b0:                      | 	.align 16
