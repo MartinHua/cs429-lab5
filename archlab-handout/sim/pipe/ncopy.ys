@@ -24,12 +24,12 @@ ncopy:
 	iaddq $-3, %rdx     # len -= 3;
 	jg Loop0		    # if so, goto loop to decrease length to less than 4:
 Restore:
-	iaddq $3, %rdx
+	iaddq $3, %rdx      # restore 3
 Residual0:
-	jg Residual1
+	jg Residual1        # if length > 0, do residual
 	ret
 Residual1:
-	mrmovq (%rdi), %r10
+	mrmovq (%rdi), %r10 
 	iaddq $8, %rdi
 	andq %r10, %r10
 	jle Residual2
@@ -38,7 +38,8 @@ Residual2:
 	rmmovq %r10, (%rsi)
 	iaddq $8, %rsi
 	iaddq $-1, %rdx
-	jmp Residual0
+	jg Residual1
+	ret
 Loop0:
 	mrmovq (%rdi), %r10	# read val from src...
 	iaddq $32, %rdi     # src += 4
@@ -66,9 +67,9 @@ Loop3:
 	jle Loop4		    # if so, goto Loop4:
 	iaddq $1, %rax		# count++
 Loop4:
-	iaddq $-4, %rdx
-	jg Loop0
-	jmp Restore
+	iaddq $-4, %rdx     # length -= 4
+	jg Loop0            # if length > 0, goto next loop
+	jmp Restore         # restore 3 and do residual
 ##################################################################
 # Do not modify the following section of code
 # Function epilogue.
