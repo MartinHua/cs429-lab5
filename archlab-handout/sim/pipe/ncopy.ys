@@ -38,7 +38,30 @@ Residual2:
 	rmmovq %r10, (%rsi)
 	iaddq $8, %rsi
 	iaddq $-1, %rdx
-	jg Residual1
+	jg Residual3
+	ret
+Residual3:
+	mrmovq (%rdi), %r10 
+	iaddq $8, %rdi
+	andq %r10, %r10
+	jle Residual4
+	iaddq $1, %rax		# count++
+Residual4:
+	rmmovq %r10, (%rsi)
+	iaddq $8, %rsi
+	iaddq $-1, %rdx
+	jg Residual5
+	ret
+Residual5:
+	mrmovq (%rdi), %r10 
+	iaddq $8, %rdi
+	andq %r10, %r10
+	jle Residual6
+	iaddq $1, %rax		# count++
+Residual6:
+	rmmovq %r10, (%rsi)
+	iaddq $8, %rsi
+	iaddq $-1, %rdx
 	ret
 Loop0:
 	mrmovq (%rdi), %r10	# read val from src...
